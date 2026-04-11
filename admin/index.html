@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Painel Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <h2>Login Admin</h2>
+  <input id="usuario" placeholder="Usuário"><br>
+  <input id="senha" type="password" placeholder="Senha"><br>
+  <button onclick="logar()">Entrar</button>
+</div>
+
+<!-- PAINEL -->
+<div id="painel" style="display:none;">
+
+  <div class="container">
+
+    <!-- MENU -->
+    <div class="menu">
+      <h3>Admin</h3>
+      <button onclick="mostrar('produtos')">📦 Produtos</button>
+      <button onclick="mostrar('pedidos')">🧾 Pedidos</button>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="conteudo">
+
+      <!-- PRODUTOS -->
+      <div id="aba-produtos">
+
+        <h2>Cadastrar Produto</h2>
+
+        <input id="nome" placeholder="Nome"><br>
+        <input id="preco" placeholder="Preço"><br>
+        <input id="estoque" placeholder="Estoque"><br>
+        <input id="codigo" placeholder="Código de barras"><br>
+        <input id="imagem" placeholder="URL da imagem do produto"><br>
+
+        <!-- 👇 INDICADOR DE EDIÇÃO -->
+        <p id="modoEdicao" style="color:green; font-weight:bold;"></p>
+
+        <button onclick="cadastrar()">Salvar</button>
+
+        <h2>Produtos</h2>
+        <ul id="lista"></ul>
+
+      </div>
+
+      <!-- PEDIDOS -->
+      <div id="aba-pedidos" style="display:none;">
+        <h2>📦 Pedidos</h2>
+        <div id="pedidos" style="display: grid; gap: 15px;"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+let codigoEditando = null;
+
+// LOGIN
+function logar() {
+  const user = usuario.value;
+  const pass = senha.value;
+
+  if (user === "manuel" && pass === "1010") {
+    login.style.display = "none";
+    painel.style.display = "block";
+    listar();
+    carregarPedidos();
+  } else {
+    alert("Usuario ou senha invalidos");
+  }
+}
+
+// ABAS
+function mostrar(aba) {
+  document.getElementById("aba-produtos").style.display = "none";
+  document.getElementById("aba-pedidos").style.display = "none";
+
+  document.getElementById("aba-" + aba).style.display = "block";
+}
+
+// CADASTRAR OU EDITAR
+async function cadastrar() {
+  const produto = {
+  nome: nome.value,
+  preco: parseFloat(preco.value),
+  estoque: parseInt(estoque.value),
+  codigo: codigo.value,
+  imagem: imagem.value   // 🖼️ NOVO CAMPO
+};
+
+  if (codigoEditando) {
+    await fetch("https://backend-loja.vercel.app/produtos/" + codigoEditando, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(produto)
+    });
+
+    codigoEditando = null;
+    document.getElementById("modoEdicao").innerText = "";
+
+  } else {
+    await fetch("https://backend-loja.vercel.app/produtos", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(produto)
+    });
+  }
+
+  limparCampos();
+  listar();
+  carregarPedidos();
+}
+
+// LISTAR
+async function listar() {
+  const res = await fetch("https://backend-loja.vercel.app/produtos");
+  const dados = await res.json();
+
+  lista.innerHTML = "";
+
+  dados.forEach(p => {
+    lista.innerHTML += `
+      <li>
+        <strong>${p.nome}</strong><br>
+        💰 R$ ${p.preco}<br>
+        📦 Estoque: ${p.estoque}<br>
+        🔢 Código: ${p.codigo}
+        <br><br>
+        <button onclick='editar(${JSON.stringify(p)})'>Editar</button>
+        <button onclick="deletar('${p._id}')">Excluir</button>
+      </li>
+    `;
+  });
+}
+
+// EDITAR ✅ (CORRIGIDO)
+function editar(produto) {
+  nome.value = produto.nome;
+  preco.value = produto.preco;
+  estoque.value = produto.estoque;
+  codigo.value = produto.codigo;
+
+  codigoEditando = produto.codigo;
+
+  document.getElementById("modoEdicao").innerText = "✏️ Editando produto...";
+}
+
+// DELETAR
+async function deletar(id) {
+  await fetch("https://backend-loja.vercel.app/produtos/" + id, {
+    method: "DELETE"
+  });
+
+  listar();
+}
+
+// LIMPAR
+function limparCampos() {
+  nome.value = "";
+  preco.value = "";
+  estoque.value = "";
+  codigo.value = "";
+
+  codigoEditando = null;
+  document.getElementById("modoEdicao").innerText = "";
+}
+
+// PEDIDOS
+async function carregarPedidos() {
+  const res = await fetch("https://backend-loja.vercel.app/pedidos");
+  const dados = await res.json();
+
+  const container = document.getElementById("pedidos");
+  container.innerHTML = "";
+
+  dados.forEach((pedido, i) => {
+    let itensHTML = "";
+
+    pedido.itens.forEach(item => {
+      itensHTML += `
+        <div class="item-pedido">
+          🛒 ${item.nome} x${item.qtd} - R$ ${item.preco * item.qtd}
+        </div>
+      `;
+    });
+
+    container.innerHTML += `
+      <div class="pedido">
+        <h4>Pedido #${i + 1}</h4>
+        ${itensHTML}
+        <p><strong>💰 Total: R$ ${pedido.total.toFixed(2)}</strong></p>
+        <p>📅 ${new Date(pedido.data).toLocaleString()}</p>
+
+        <button onclick="deletarPedido('${pedido._id}')">
+          🗑️ Excluir Pedido
+        </button>
+      </div>
+    `;
+  });
+}
+
+// DELETAR PEDIDO
+async function deletarPedido(id) {
+  const confirmar = confirm("Deseja excluir este pedido?");
+  if (!confirmar) return;
+
+  await fetch("https://backend-loja.vercel.app/pedidos/" + id, {
+    method: "DELETE"
+  });
+
+  carregarPedidos();
+}
+</script>
+
+</body>
+</html>

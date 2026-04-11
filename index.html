@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Minha Loja</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ===== HEADER PROFISSIONAL ===== -->
+<header class="topo">
+  <h1>🛒 LOJA MANUEL PEÇAS</h1>
+
+  <input 
+    type="text" 
+    id="busca" 
+    placeholder="🔍 Buscar por nome ou código..." 
+    oninput="filtrarProdutos()"
+  >
+</header>
+
+<!-- ===== LAYOUT PRINCIPAL ===== -->
+<main class="layout">
+
+  <!-- PRODUTOS -->
+  <section class="produtos" id="produtos"></section>
+
+  <!-- CARRINHO -->
+  <aside class="carrinho">
+    <h3>🛒 Carrinho</h3>
+
+    <ul id="listaCarrinho"></ul>
+
+    <p><strong>Total: R$ <span id="total">0</span></strong></p>
+
+    <button onclick="finalizar()">Finalizar Compra</button>
+  </aside>
+
+</main>
+
+<script>
+let carrinho = [];
+let todosProdutos = [];
+
+async function carregarProdutos() {
+  const res = await fetch("https://backend-loja.vercel.app/produtos");
+  const dados = await res.json();
+
+  todosProdutos = dados;
+  renderizarProdutos(dados);
+}
+
+function renderizarProdutos(lista) {
+  const container = document.getElementById("produtos");
+  container.innerHTML = "";
+
+  lista.forEach(p => {
+    container.innerHTML += `
+  <div class="produto">
+
+    <img src="${p.imagem || 'https://via.placeholder.com/300'}" alt="${p.nome}">
+
+    <h3>${p.nome}</h3>
+    <p>💰 R$ ${p.preco}</p>
+    <p>📦 Estoque: ${p.estoque}</p>
+    <p class="codigo">cod. ${p.codigo}</p>
+
+    <button onclick="comprar('${p.codigo}', '${p.nome}', ${p.preco}, this)">
+      Comprar
+    </button>
+
+  </div>
+`;
+  });
+}
+
+// 🔍 BUSCA
+function filtrarProdutos() {
+  const texto = document.getElementById("busca").value.toLowerCase();
+
+  const filtrados = todosProdutos.filter(p =>
+    p.nome.toLowerCase().includes(texto) ||
+    String(p.codigo).toLowerCase().includes(texto)
+  );
+
+  renderizarProdutos(filtrados);
+}
+
+// 🛒 CARRINHO
+function comprar(codigo, nome, preco) {
+  const item = carrinho.find(p => p.codigo === codigo);
+
+  if (item) {
+    item.qtd++;
+  } else {
+    carrinho.push({ codigo, nome, preco, qtd: 1 });
+  }
+
+  atualizarCarrinho();
+}
+
+function atualizarCarrinho() {
+  const lista = document.getElementById("listaCarrinho");
+  const totalSpan = document.getElementById("total");
+
+  lista.innerHTML = "";
+  let total = 0;
+
+  carrinho.forEach((item, index) => {
+    total += item.preco * item.qtd;
+
+    lista.innerHTML += `
+      <li>
+        ${item.nome} x${item.qtd} - R$ ${item.preco * item.qtd}
+        <button onclick="remover(${index})">X</button>
+      </li>
+    `;
+  });
+
+  totalSpan.innerText = total.toFixed(2);
+}
+
+function remover(index) {
+  carrinho.splice(index, 1);
+  atualizarCarrinho();
+}
+
+// ✅ FINALIZAR COMPRA
+async function finalizar() {
+  if (carrinho.length === 0) {
+    alert("Carrinho vazio!");
+    return;
+  }
+
+  const res = await fetch("https://backend-loja.vercel.app/pedido", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itens: carrinho })
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    alert("✅ Pedido realizado com sucesso!");
+    carrinho = [];
+    atualizarCarrinho();
+    carregarProdutos();
+  } else {
+    alert("❌ " + data.erro);
+  }
+}
+
+carregarProdutos();
+</script>
+
+</body>
+</html>
