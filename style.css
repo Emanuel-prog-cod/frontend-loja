@@ -345,26 +345,6 @@ button:active::after {
 }
 
 /* ===== RESPONSIVO ===== */
-@media (max-width: 768px) {
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .produtos {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .carrinho {
-    width: 100%;
-    position: relative;
-    top: 0;
-  }
-
-  h1 {
-    font-size: 22px;
-  }
-}
 
 /* ===== ITEM CARRINHO MODERNO ===== */
 .item-carrinho {
@@ -437,19 +417,18 @@ button:active::after {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
 
   body {
     padding: 10px;
   }
 
-  h1 {
-    font-size: 20px;
-    letter-spacing: 1px;
+  .layout {
+    grid-template-columns: 1fr;
   }
 
   .produtos {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 
   .produto {
@@ -458,10 +437,15 @@ button:active::after {
 
   .carrinho {
     width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  h1 {
+    font-size: 22px;
   }
 
   button {
     font-size: 14px;
-    padding: 10px;
   }
 }
