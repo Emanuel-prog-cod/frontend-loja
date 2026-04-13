@@ -24,6 +24,7 @@
       <h3>Admin</h3>
       <button onclick="mostrar('produtos')">📦 Produtos</button>
       <button onclick="mostrar('pedidos')">🧾 Pedidos</button>
+      <button onclick="sair()">🚪 Sair</button>
     </div>
 
     <!-- CONTEÚDO -->
@@ -46,6 +47,14 @@
         <button onclick="cadastrar()">Salvar</button>
 
         <h2>Produtos</h2>
+
+        <input 
+  type="text" 
+  id="buscaAdmin" 
+  placeholder="🔍 Buscar por nome ou código..." 
+  oninput="filtrarAdmin()"
+        >
+
         <ul id="lista"></ul>
 
       </div>
@@ -62,7 +71,10 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
+let todosProdutosAdmin = [];
 let codigoEditando = null;
 
 // LOGIN
@@ -71,10 +83,15 @@ function logar() {
   const pass = senha.value;
 
   if (user === "manuel" && pass === "1010") {
+
+    // 🔥 SALVA LOGIN
+    localStorage.setItem("logado", "true");
+
     login.style.display = "none";
     painel.style.display = "block";
     listar();
     carregarPedidos();
+
   } else {
     alert("Usuario ou senha invalidos");
   }
@@ -126,20 +143,26 @@ async function listar() {
   const res = await fetch("https://backend-loja.vercel.app/produtos");
   const dados = await res.json();
 
+  todosProdutosAdmin = dados;
+
   lista.innerHTML = "";
 
   dados.forEach(p => {
     lista.innerHTML += `
-      <li>
-        <strong>${p.nome}</strong><br>
-        💰 R$ ${p.preco}<br>
-        📦 Estoque: ${p.estoque}<br>
-        🔢 Código: ${p.codigo}
-        <br><br>
-        <button onclick='editar(${JSON.stringify(p)})'>Editar</button>
-        <button onclick="deletar('${p._id}')">Excluir</button>
-      </li>
-    `;
+  <li>
+    <img src="${p.imagem || 'https://via.placeholder.com/100'}" 
+         style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><br>
+
+    <strong>${p.nome}</strong><br>
+    💰 R$ ${p.preco}<br>
+    📦 Estoque: ${p.estoque}<br>
+    🔢 Código: ${p.codigo}
+
+    <br><br>
+    <button onclick='editar(${JSON.stringify(p)})'>Editar</button>
+    <button onclick="deletar('${p._id}')">Excluir</button>
+  </li>
+`;
   });
 }
 
@@ -189,7 +212,7 @@ async function carregarPedidos() {
     pedido.itens.forEach(item => {
       itensHTML += `
         <div class="item-pedido">
-          🛒 ${item.nome} x${item.qtd} - R$ ${item.preco * item.qtd}
+      🛒  ${item.nome} x${item.qtd}<br>   🔢 Código: ${item.codigo || "N/A"}<br> 💸 R$ ${item.preco * item.qtd}
         </div>
       `;
     });
@@ -197,9 +220,16 @@ async function carregarPedidos() {
     container.innerHTML += `
       <div class="pedido">
         <h4>Pedido #${i + 1}</h4>
-        ${itensHTML}
+
+<p><strong>👤 Cliente:</strong> ${pedido.cliente || "Não informado"}</p>
+
+${itensHTML}
         <p><strong>💰 Total: R$ ${pedido.total.toFixed(2)}</strong></p>
         <p>📅 ${new Date(pedido.data).toLocaleString()}</p>
+
+        <button onclick='gerarPDF(${JSON.stringify(pedido)})'>
+  📄 Baixar PDF
+</button>
 
         <button onclick="deletarPedido('${pedido._id}')">
           🗑️ Excluir Pedido
@@ -220,6 +250,101 @@ async function deletarPedido(id) {
 
   carregarPedidos();
 }
+
+function gerarPDF(pedido) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+
+  // TÍTULO
+  doc.setFontSize(16);
+  doc.text("LOJA MANU PEÇAS", 10, y);
+
+  y += 10;
+
+  // CLIENTE (se tiver no pedido)
+  doc.setFontSize(12);
+  doc.text("Cliente: " + (pedido.cliente || "Não informado"), 10, y);
+
+  y += 10;
+
+  doc.text("Data: " + new Date(pedido.data).toLocaleString(), 10, y);
+y += 10;
+
+  doc.text("----------------------------------------", 10, y);
+  y += 10;
+
+  // PRODUTOS
+  pedido.itens.forEach(item => {
+    doc.text("Produto: " + item.nome, 10, y);
+    y += 6;
+
+    doc.text("Código: " + (item.codigo || "N/A"), 10, y);
+    y += 6;
+
+    doc.text("Qtd: " + item.qtd, 10, y);
+    y += 6;
+
+    doc.text("Preço: R$ " + item.preco, 10, y);
+    y += 10;
+  });
+
+  doc.text("----------------------------------------", 10, y);
+  y += 10;
+
+  // TOTAL
+  doc.setFontSize(14);
+  doc.text("TOTAL: R$ " + pedido.total.toFixed(2), 10, y);
+
+  // BAIXAR
+  doc.save("pedido.pdf");
+}
+
+function sair() {
+  localStorage.removeItem("logado");
+
+  painel.style.display = "none";
+  login.style.display = "block";
+}
+
+// 🔥 MANTER LOGADO
+if (localStorage.getItem("logado") === "true") {
+  login.style.display = "none";
+  painel.style.display = "block";
+  listar();
+  carregarPedidos();
+}
+
+function filtrarAdmin() {
+  const texto = document.getElementById("buscaAdmin").value.toLowerCase();
+
+  const filtrados = todosProdutosAdmin.filter(p =>
+    p.nome.toLowerCase().includes(texto) ||
+    String(p.codigo).toLowerCase().includes(texto)
+  );
+
+  lista.innerHTML = "";
+
+  filtrados.forEach(p => {
+    lista.innerHTML += `
+      <li>
+        <img src="${p.imagem || 'https://via.placeholder.com/100'}" 
+             style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><br>
+
+        <strong>${p.nome}</strong><br>
+        💰 R$ ${p.preco}<br>
+        📦 Estoque: ${p.estoque}<br>
+        🔢 Código: ${p.codigo}
+
+        <br><br>
+        <button onclick='editar(${JSON.stringify(p)})'>Editar</button>
+        <button onclick="deletar('${p._id}')">Excluir</button>
+      </li>
+    `;
+  });
+}
+
 </script>
 
 </body>

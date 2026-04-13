@@ -30,6 +30,8 @@
   <aside class="carrinho">
     <h3>🛒 Carrinho</h3>
 
+    <input id="clienteNome" placeholder="Digite seu nome" style="margin-bottom:10px;">
+    
     <ul id="listaCarrinho"></ul>
 
     <p><strong>Total: R$ <span id="total">0</span></strong></p>
@@ -91,10 +93,18 @@ function filtrarProdutos() {
 function comprar(codigo, nome, preco) {
   const item = carrinho.find(p => p.codigo === codigo);
 
+  const produto = todosProdutos.find(p => p.codigo == codigo);
+
   if (item) {
     item.qtd++;
   } else {
-    carrinho.push({ codigo, nome, preco, qtd: 1 });
+    carrinho.push({ 
+      codigo, 
+      nome, 
+      preco, 
+      qtd: 1,
+      imagem: produto.imagem // 👈 NOVO
+    });
   }
 
   atualizarCarrinho();
@@ -111,11 +121,27 @@ function atualizarCarrinho() {
     total += item.preco * item.qtd;
 
     lista.innerHTML += `
-      <li>
-        ${item.nome} x${item.qtd} - R$ ${item.preco * item.qtd}
-        <button onclick="remover(${index})">X</button>
-      </li>
-    `;
+  <li class="item-carrinho">
+
+    <img src="${item.imagem || 'https://via.placeholder.com/60'}">
+
+    <div class="info">
+      <strong>${item.nome}</strong>
+      <span>Cod: ${item.codigo}</span>
+
+      <div class="qtd">
+        <button onclick="diminuir(${index})">-</button>
+        <span>${item.qtd}</span>
+        <button onclick="aumentar(${index})">+</button>
+      </div>
+
+      <span>R$ ${(item.preco * item.qtd).toFixed(2)}</span>
+    </div>
+
+    <button onclick="remover(${index})">✖</button>
+
+  </li>
+`;
   });
 
   totalSpan.innerText = total.toFixed(2);
@@ -126,6 +152,20 @@ function remover(index) {
   atualizarCarrinho();
 }
 
+function aumentar(index) {
+  carrinho[index].qtd++;
+  atualizarCarrinho();
+}
+
+function diminuir(index) {
+  if (carrinho[index].qtd > 1) {
+    carrinho[index].qtd--;
+  } else {
+    carrinho.splice(index, 1);
+  }
+  atualizarCarrinho();
+}
+
 // ✅ FINALIZAR COMPRA
 async function finalizar() {
   if (carrinho.length === 0) {
@@ -133,10 +173,22 @@ async function finalizar() {
     return;
   }
 
+  const nome = document.getElementById("clienteNome").value;
+
+  if (!nome) {
+    alert("Digite seu nome!");
+    return;
+  }
+
+  const total = carrinho.reduce((soma, item) => soma + (item.preco * item.qtd), 0);
+
   const res = await fetch("https://backend-loja.vercel.app/pedido", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ itens: carrinho })
+    body: JSON.stringify({
+  cliente: nome, // 👈 ESSA LINHA RESOLVE TUDO
+  itens: carrinho
+})
   });
 
   const data = await res.json();
