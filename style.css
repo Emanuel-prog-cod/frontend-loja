@@ -2,58 +2,42 @@
   box-sizing: border-box;
 }
 
-/* ===== FUNDO PREMIUM ANIMADO ===== */
+/* ===== FUNDO PREMIUM (APPLE / NETFLIX STYLE) ===== */
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 20px;
-  color: #1b1b1b;
   min-height: 100vh;
   overflow-x: hidden;
+  color: #1b1b1b;
 
-  /* fundo mais sofisticado */
-  background: linear-gradient(-45deg,
-    #0b2e13,
-    #145a32,
-    #1b5e20,
-    #2e7d32,
-    #0f3d1f
+  background: radial-gradient(circle at top,
+    #1b5e20 0%,
+    #0b2e13 45%,
+    #050a07 100%
   );
 
-  background-size: 400% 400%;
-  animation: gradientMove 7s ease infinite;
+  animation: bgPulse 10s ease-in-out infinite;
 }
 
-/* animação mais suave */
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* brilho mais elegante (menos agressivo) */
+/* glow profundo */
 body::before {
   content: "";
   position: fixed;
-  top: -40%;
-  left: -40%;
-  width: 180%;
-  height: 180%;
-
-  background: radial-gradient(
-    circle,
-    rgba(76,175,80,0.35) 0%,
-    transparent 75%
+  inset: -50%;
+  background: radial-gradient(circle,
+    rgba(76,175,80,0.18),
+    transparent 60%
   );
-
-  animation: floatGlow 7s ease-in-out infinite;
+  filter: blur(120px);
+  animation: glowMove 12s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes floatGlow {
-  0% { transform: translate(0,0); }
-  50% { transform: translate(60px, 40px); }
-  100% { transform: translate(0,0); }
+@keyframes glowMove {
+  0% { transform: translate(-10%, -10%); }
+  50% { transform: translate(10%, 10%); }
+  100% { transform: translate(-10%, -10%); }
 }
 
 /* ===== TÍTULO ===== */
@@ -61,9 +45,41 @@ h1 {
   text-align: center;
   color: #ffffff;
   margin-bottom: 15px;
-  font-size: 34px;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  font-size: 36px;
+  letter-spacing: 2px;
+
+  position: relative;
+
+  /* 🔥 efeito 3D base */
+  text-shadow:
+    1px 1px 0 #0b2e13,
+    2px 2px 0 #0b2e13,
+    3px 3px 0 #0b2e13,
+    4px 4px 0 #062010,
+    5px 5px 15px rgba(0,0,0,0.6);
+  
+  transform: perspective(500px) rotateX(10deg);
+
+  animation: floatTitle 3s ease-in-out infinite;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+  animation: shineMove 3.5s infinite;
 }
 
 /* ===== BUSCA ===== */
@@ -92,19 +108,21 @@ input:focus {
   align-items: start;
 }
 
-/* ===== PAINÉIS (GLASS MODERNO) ===== */
+/* ===== PAINÉIS ===== */
 .produtos, .carrinho {
-  background: rgba(155, 217, 177, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
   padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 18px 35px rgba(0,0,0,0.18);
-  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
 }
 
-/* ===== GRID PRODUTOS ===== */
+/* ===== PRODUTOS GRID ===== */
 .produtos {
   display: grid;
   grid-template-columns: repeat(auto-fill, 220px);
@@ -112,47 +130,74 @@ input:focus {
   gap: 15px;
 }
 
-/* ===== CARD PRODUTO ===== */
+/* ===== PRODUTO CARD ===== */
 .produto {
-  background: #ffffff;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 16px;
   padding: 12px;
-  border: 1px solid #e0f2e9;
-  transition: 0.25s ease;
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+
+  transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+
+  color: white;
+}
+
+.produto::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #2e7d32, #66bb6a, #a5d6a7);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.produto:hover::before {
+  opacity: 1;
 }
 
 .produto:hover {
   transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 18px 35px rgba(0,0,0,0.20);
-  border-color: #66bb6a;
+
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(102, 187, 106, 0.4);
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
+/* imagem */
 .produto img {
   width: 100%;
   height: 140px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 8px;
-
   box-shadow: 0 8px 18px rgba(0,0,0,0.15);
 }
 
-/* ===== TEXTO ===== */
+/* texto */
 .produto h3 {
   margin: 5px 0;
-  color: #1b5e20;
+  color: rgba(31, 45, 32, 0.85);
 }
 
 .produto p {
   margin: 4px 0;
 }
 
-/* ===== CÓDIGO ===== */
 .codigo {
-  font-size: 12px;
-  color: #666;
+  font-size: 15px;
+  color: rgba(102, 224, 240, 0.6);
 }
 
 /* ===== BOTÕES ===== */
@@ -171,16 +216,21 @@ button {
   overflow: hidden;
 }
 
+button.added {
+  background: #1565c0 !important;
+  transform: scale(1.02);
+}
+
 button:hover {
-  background: linear-gradient(135deg, #1b5e20, #2e7d32);
   transform: scale(1.04);
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
 }
 
 button:active {
   transform: scale(0.96);
 }
 
-/* efeito clique suave */
+/* efeito clique */
 button::after {
   content: "";
   position: absolute;
@@ -200,15 +250,14 @@ button:active::after {
 }
 
 /* ===== CARRINHO ===== */
-/* ===== CARRINHO (COMPACTO PROFISSIONAL) ===== */
 .carrinho {
   display: flex;
   flex-direction: column;
 
-  width: 260px; /* 🔥 controla tamanho */
-  max-height: 500px; /* 🔥 limita altura */
+  width: 260px;
+  max-height: 500px;
 
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255,255,255,0.18);
   backdrop-filter: blur(14px);
 
   padding: 12px;
@@ -221,43 +270,37 @@ button:active::after {
   top: 20px;
 }
 
-/* ===== TÍTULO ===== */
+/* título carrinho */
 .carrinho h3 {
   margin-top: 0;
   margin-bottom: 12px;
-  color: #1b5e20;
+  color: #273828;
   font-size: 18px;
   text-align: center;
   padding-bottom: 10px;
-
   border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-/* ===== LISTA ===== */
+/* lista carrinho */
 .carrinho ul {
   list-style: none;
   padding: 0;
   margin: 0;
-
   flex: 1;
   max-height: 420px;
   overflow-y: auto;
 }
 
-/* ===== ITEM (CARD MODERNO) ===== */
+/* item carrinho */
 .carrinho li {
   background: rgba(255,255,255,0.95);
-
   margin-bottom: 8px;
   padding: 8px;
   border-radius: 10px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   font-size: 12px;
-
   box-shadow: 0 6px 12px rgba(0,0,0,0.08);
 }
 
@@ -266,13 +309,11 @@ button:active::after {
   box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
-/* ===== TEXTO ITEM ===== */
 .carrinho li span {
   font-size: 14px;
   color: #333;
 }
 
-/* ===== BOTÃO REMOVER ===== */
 .carrinho li button {
   width: auto;
   padding: 4px 6px;
@@ -281,18 +322,17 @@ button:active::after {
   background: #e53935;
 }
 
-/* ===== TOTAL ===== */
+/* total */
 .carrinho p {
   margin-top: 8px;
   font-size: 14px;
   text-align: center;
-
   background: rgba(255,255,255,0.9);
   padding: 8px;
   border-radius: 10px;
 }
 
-/* ===== BOTÃO FINALIZAR ===== */
+/* botão finalizar */
 .carrinho > button {
   font-size: 14px;
   padding: 10px;
@@ -301,36 +341,43 @@ button:active::after {
 }
 
 .carrinho > button:hover {
-  transform: scale(1.04);
+  transform: translateY(-1px) scale(1.02);
 }
 
 /* ===== RESPONSIVO ===== */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .produtos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .carrinho {
+    width: 100%;
+    position: relative;
+    top: 0;
   }
 
   h1 {
-    font-size: 26px;
+    font-size: 22px;
   }
 }
 
-/* ===== NOVO VISUAL DOS ITENS DO CARRINHO ===== */
+/* ===== ITEM CARRINHO MODERNO ===== */
 .item-carrinho {
   display: flex;
   align-items: center;
   gap: 8px;
-
   background: rgba(255,255,255,0.95);
   padding: 8px;
   border-radius: 10px;
-
   margin-bottom: 8px;
-
   box-shadow: 0 6px 12px rgba(0,0,0,0.08);
 }
 
-/* imagem */
 .item-carrinho img {
   width: 45px;
   height: 45px;
@@ -338,7 +385,6 @@ button:active::after {
   object-fit: cover;
 }
 
-/* info */
 .item-carrinho .info {
   flex: 1;
   display: flex;
@@ -346,7 +392,6 @@ button:active::after {
   font-size: 12px;
 }
 
-/* quantidade + e - */
 .item-carrinho .qtd {
   display: flex;
   align-items: center;
@@ -354,7 +399,6 @@ button:active::after {
   margin: 4px 0;
 }
 
-/* botões + e - */
 .item-carrinho .qtd button {
   width: 22px;
   height: 22px;
@@ -363,7 +407,6 @@ button:active::after {
   border-radius: 5px;
 }
 
-/* botão remover (X) */
 .item-carrinho > button {
   background: #e53935;
   width: 25px;
@@ -371,4 +414,54 @@ button:active::after {
   border-radius: 50%;
   padding: 0;
   font-size: 12px;
+}
+
+@keyframes floatTitle {
+  0% {
+    transform: perspective(500px) rotateX(10deg) translateY(0px);
+  }
+  50% {
+    transform: perspective(500px) rotateX(10deg) translateY(-5px);
+  }
+  100% {
+    transform: perspective(500px) rotateX(10deg) translateY(0px);
+  }
+}
+
+@keyframes shineMove {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+@media (max-width: 480px) {
+
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .produtos {
+    grid-template-columns: 1fr;
+  }
+
+  .produto {
+    width: 100%;
+  }
+
+  .carrinho {
+    width: 100%;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+  }
 }

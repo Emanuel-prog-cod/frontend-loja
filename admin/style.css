@@ -1,100 +1,233 @@
-body {
-  font-family: Arial;
-  background: linear-gradient(135deg, #0f9b0f, #56ab2f);
-  padding: 20px;
-  color: #333;
+* {
+  box-sizing: border-box;
 }
 
-/* LOGIN */
+/* ===== FUNDO PREMIUM IGUAL LOJA ===== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  color: #fff;
+
+  background: radial-gradient(circle at top,
+    #1b5e20 0%,
+    #0b2e13 45%,
+    #050a07 100%
+  );
+
+  animation: bgPulse 10s ease-in-out infinite;
+}
+
+/* glow fundo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  background: radial-gradient(circle,
+    rgba(76,175,80,0.18),
+    transparent 60%
+  );
+  filter: blur(120px);
+  animation: glowMove 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowMove {
+  0% { transform: translate(-10%, -10%); }
+  50% { transform: translate(10%, 10%); }
+  100% { transform: translate(-10%, -10%); }
+}
+
+/* ===== LOGIN GLASS ===== */
 #login {
-  background: white;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
   padding: 25px;
-  border-radius: 10px;
-  max-width: 300px;
+  border-radius: 16px;
+  max-width: 320px;
   margin: auto;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.15);
+
   text-align: center;
 }
 
-/* PAINEL */
+/* ===== PAINEL ===== */
 #painel {
   margin-top: 20px;
 }
 
-/* INPUTS */
+/* ===== INPUTS ===== */
 input {
   padding: 10px;
   margin: 6px 0;
   width: 100%;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  border: 1px solid rgba(255,255,255,0.2);
   outline: none;
+
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+
+  transition: 0.2s;
+}
+
+input::placeholder {
+  color: rgba(255,255,255,0.6);
 }
 
 input:focus {
-  border-color: #0f9b0f;
+  border-color: #66bb6a;
+  box-shadow: 0 0 12px rgba(102,187,106,0.4);
 }
 
-/* BOTÕES */
+/* ===== BOTÕES ===== */
 button {
   padding: 10px;
   margin-top: 5px;
   cursor: pointer;
   border: none;
-  border-radius: 6px;
-  background: #0f9b0f;
+  border-radius: 8px;
+
+  background: linear-gradient(135deg, #2e7d32, #43a047);
   color: white;
   font-weight: bold;
+
   transition: 0.2s;
 }
 
 button:hover {
-  background: #0c7a0c;
   transform: scale(1.03);
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
 }
 
-/* LISTA PRODUTOS */
+/* ===== TÍTULOS 3D ===== */
+h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 15px;
+
+  text-shadow:
+    1px 1px 0 #0b2e13,
+    2px 2px 0 #0b2e13,
+    3px 3px 10px rgba(0,0,0,0.6);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* luz passando no título */
+h2::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+  animation: shineMove 4s infinite;
+}
+
+@keyframes shineMove {
+  0% { left: -150%; }
+  100% { left: 150%; }
+}
+
+/* ===== LISTA PRODUTOS ===== */
 ul {
   list-style: none;
   padding: 0;
 }
 
 li {
-  background: #fff;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
   padding: 12px;
   margin-bottom: 8px;
-  border-radius: 8px;
+  border-radius: 10px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+  transition: 0.2s;
 }
 
-/* PEDIDOS */
+li:hover {
+  transform: scale(1.02);
+}
+
+/* ===== PEDIDOS ===== */
 .pedido {
-  background: #fff;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px);
+
   padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
-  border-left: 5px solid #0f9b0f;
+  border-radius: 12px;
+
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+
+  border-left: 4px solid #66bb6a;
+  margin-bottom: 10px;
 }
 
 .pedido h4 {
   margin: 0 0 10px;
-  color: #0f9b0f;
+  color: #ffffff;
 }
 
 .item-pedido {
   font-size: 14px;
   margin-left: 10px;
   margin-bottom: 3px;
+  color: rgba(255,255,255,0.85);
 }
 
-/* TITULOS */
-h2 {
-  color: #fff;
-}
+@media (max-width: 480px) {
 
-#painel h2 {
-  color: #fff;
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .produtos {
+    grid-template-columns: 1fr;
+  }
+
+  .produto {
+    width: 100%;
+  }
+
+  .carrinho {
+    width: 100%;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
