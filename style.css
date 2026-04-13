@@ -513,3 +513,79 @@ button:active::after {
     padding: 12px;
   }
 }
+
+/* melhora espaçamento geral mobile */
+@media (max-width: 768px) {
+  .layout {
+    padding: 5px;
+  }
+
+  .produtos {
+    padding: 10px;
+  }
+
+  .carrinho {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .produtos {
+    padding: 8px;
+  }
+
+  .produto {
+    margin: 0 auto;
+  }
+
+  .item-carrinho {
+    font-size: 13px;
+  }
+}
+
+/* botão flutuante do carrinho */
+.btn-carrinho {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+
+  font-size: 24px;
+
+  background: #2e7d32;
+  color: white;
+  border: none;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* mobile: carrinho vira painel deslizante */
+@media (max-width: 768px) {
+
+  .btn-carrinho {
+    display: block;
+  }
+
+  .carrinho {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100%;
+    width: 90%;
+    max-width: 360px;
+
+    transition: right 0.3s ease;
+    z-index: 9998;
+
+    border-radius: 0;
+  }
+
+  .carrinho.aberto {
+    right: 0;
+  }
+}

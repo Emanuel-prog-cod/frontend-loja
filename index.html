@@ -9,6 +9,8 @@
 
 <body>
 
+ <button class="btn-carrinho" onclick="toggleCarrinho()"> 🛒</button>
+
 <!-- ===== HEADER PROFISSIONAL ===== -->
 <header class="topo">
   <h1>🛒 LOJA MANUEL PEÇAS</h1>
@@ -28,7 +30,7 @@
   <section class="produtos" id="produtos"></section>
 
   <!-- CARRINHO -->
-  <aside class="carrinho">
+  <aside class="carrinho" id="carrinho">
     <h3>🛒 Carrinho</h3>
 
     <input id="clienteNome" placeholder="Digite seu nome" style="margin-bottom:10px;">
@@ -205,6 +207,11 @@ async function finalizar() {
 }
 
 carregarProdutos();
+
+function toggleCarrinho() {
+  document.getElementById("carrinho").classList.toggle("aberto");
+}
+
 </script>
 
 </body>
