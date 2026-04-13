@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 /* ===== FUNDO PREMIUM (APPLE / NETFLIX STYLE) ===== */
 body {
   font-family: 'Arial', sans-serif;
