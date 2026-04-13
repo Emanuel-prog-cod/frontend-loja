@@ -423,20 +423,25 @@ button:active::after {
     padding: 10px;
   }
 
+  /* 🔥 MUDA PARA FLEX (resolve o bug do resize) */
   .layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
   }
 
+  /* 🔥 evita “esticar” cards */
   .produtos {
-  grid-template-columns: repeat(2, 1fr);
-}
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   .produto {
     width: 100%;
   }
 
+  /* 🔥 carrinho fixo e estável */
   .carrinho {
     width: 100%;
+    max-width: 100%;
     position: relative;
     top: 0;
   }
