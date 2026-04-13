@@ -6,7 +6,7 @@
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
-  padding: 20;
+  padding: 20px;
   min-height: 100vh;
   overflow-x: hidden;
   color: #1b1b1b;
@@ -417,3 +417,40 @@ button:active::after {
   }
 }
 
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  /* 🔥 MUDA PARA FLEX (resolve o bug do resize) */
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 🔥 evita “esticar” cards */
+  .produtos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .produto {
+    width: 100%;
+  }
+
+  /* 🔥 carrinho fixo e estável */
+  .carrinho {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  button {
+    font-size: 14px;
+  }
+}
