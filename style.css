@@ -417,40 +417,31 @@ button:active::after {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
 
   body {
     padding: 10px;
   }
 
-  /* 🔥 MUDA PARA FLEX (resolve o bug do resize) */
-  .layout {
-    display: flex;
-    flex-direction: column;
+  h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
   }
 
-  /* 🔥 evita “esticar” cards */
   .produtos {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .produto {
     width: 100%;
   }
 
-  /* 🔥 carrinho fixo e estável */
   .carrinho {
     width: 100%;
-    max-width: 100%;
-    position: relative;
-    top: 0;
-  }
-
-  h1 {
-    font-size: 22px;
   }
 
   button {
     font-size: 14px;
+    padding: 10px;
   }
 }
