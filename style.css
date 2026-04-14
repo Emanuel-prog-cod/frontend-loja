@@ -571,7 +571,20 @@ button:active::after {
   color: white;
   border: none;
 
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  /* efeito 3D simples */
+box-shadow:
+  0 6px 0 #1b5e20,
+  0 10px 25px rgba(0,0,0,0.3);
+
+transition: all 0.15s ease;
+}
+
+.btn-carrinho:active {
+  transform: translateY(4px);
+
+  box-shadow:
+    0 2px 0 #1b5e20,
+    0 5px 15px rgba(0,0,0,0.3);
 }
 
 /* mobile: carrinho vira painel deslizante */
