@@ -472,13 +472,26 @@ button:active::after {
   }
 
   .produto {
-    padding: 16px;
+    padding: 8px;
     border-radius: 16px;
   }
 
   .produto img {
-    height: 180px;
+    height: 100px;
   }
+
+  .produto h3 {
+  font-size: 13px;
+}
+
+.produto p {
+  font-size: 12px;
+}
+
+.produto button {
+  padding: 6px;
+  font-size: 12px;
+}
 
   /* 👇 carrinho mais leve */
   .carrinho {
