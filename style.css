@@ -448,13 +448,6 @@ button:active::after {
     width: 100%;
   }
 
-  .carrinho {
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    top: 0;
-  }
-
   button {
     font-size: 14px;
   }
@@ -547,6 +540,10 @@ button:active::after {
 .btn-carrinho {
   display: none;
   position: fixed;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
   bottom: 20px;
   right: 20px;
   z-index: 9999;
@@ -614,14 +611,6 @@ button:active::after {
 
 .overlay.ativo {
   display: block;
-}
-
-.btn-carrinho {
-  position: fixed;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
 }
 
 /* contador bolinha */
