@@ -644,7 +644,8 @@ button:active::after {
   justify-content: center;
 
   position: absolute;
-  top: 2px;
+  bottom: 2px;
+  top: auto;
   right: 2px;
 
   box-shadow: 0 3px 6px rgba(0,0,0,0.3);
