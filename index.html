@@ -9,7 +9,11 @@
 
 <body>
 
- <button class="btn-carrinho" onclick="toggleCarrinho()"> 🛒</button>
+  <!-- overlay escuro do carrinho -->
+ <button class="btn-carrinho" onclick="toggleCarrinho()">
+  🛒 <span id="contadorCarrinho">0</span></button>
+
+  <div class="overlay" onclick="toggleCarrinho()"></div>
 
 <!-- ===== HEADER PROFISSIONAL ===== -->
 <header class="topo">
@@ -111,6 +115,7 @@ function comprar(codigo, nome, preco) {
   }
 
   atualizarCarrinho();
+  atualizarContadorCarrinho();
 }
 
 function atualizarCarrinho() {
@@ -153,11 +158,13 @@ function atualizarCarrinho() {
 function remover(index) {
   carrinho.splice(index, 1);
   atualizarCarrinho();
+  atualizarContadorCarrinho();
 }
 
 function aumentar(index) {
   carrinho[index].qtd++;
   atualizarCarrinho();
+  atualizarContadorCarrinho();
 }
 
 function diminuir(index) {
@@ -167,6 +174,7 @@ function diminuir(index) {
     carrinho.splice(index, 1);
   }
   atualizarCarrinho();
+  atualizarContadorCarrinho();
 }
 
 // ✅ FINALIZAR COMPRA
@@ -196,20 +204,39 @@ async function finalizar() {
 
   const data = await res.json();
 
-  if (res.ok) {
-    alert("✅ Pedido realizado com sucesso!");
-    carrinho = [];
-    atualizarCarrinho();
-    carregarProdutos();
-  } else {
-    alert("❌ " + data.erro);
-  }
-}
+ if (res.ok) {
+  alert("✅ Pedido realizado com sucesso!");
+  
+  carrinho = [];
+  atualizarCarrinho();
+  atualizarContadorCarrinho();
+  carregarProdutos();
+
+  // 🔥 FECHA CARRINHO + OVERLAY
+  document.getElementById("carrinho").classList.remove("aberto");
+  document.querySelector(".overlay").classList.remove("ativo");
+
+} else {
+  alert("❌ " + data.erro);
+}}
 
 carregarProdutos();
+atualizarContadorCarrinho();
+
+function atualizarContadorCarrinho() {
+  const contador = document.getElementById("contadorCarrinho");
+
+  let totalItens = carrinho.reduce((soma, item) => soma + item.qtd, 0);
+
+  contador.innerText = totalItens;
+}
 
 function toggleCarrinho() {
-  document.getElementById("carrinho").classList.toggle("aberto");
+  const carrinhoEl = document.getElementById("carrinho");
+  const overlay = document.querySelector(".overlay");
+
+  carrinhoEl.classList.toggle("aberto");
+  overlay.classList.toggle("ativo");
 }
 
 </script>
