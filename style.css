@@ -693,3 +693,60 @@ transition: all 0.15s ease;
 .produto:hover .img-box img {
   transform: scale(1.08);
 }
+
+/* ===== COLUNA DIREITA ===== */
+.coluna-direita {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ===== PEDIDOS (IGUAL CARRINHO) ===== */
+.pedidos-box {
+  display: flex;
+  flex-direction: column;
+
+  width: 260px;
+
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px);
+
+  padding: 12px;
+  border-radius: 15px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* título */
+.pedidos-box h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #273828;
+  font-size: 18px;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+/* card de cada pedido */
+.pedido-item {
+  background: rgba(255,255,255,0.95);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  font-size: 13px;
+}
+
+.pedido-item:hover {
+  transform: scale(1.02);
+}
+
+/* botões dentro */
+.pedido-item button {
+  margin-top: 5px;
+  font-size: 12px;
+  padding: 6px;
+}

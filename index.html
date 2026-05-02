@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minha Loja</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -34,6 +35,8 @@
   <section class="produtos" id="produtos"></section>
 
   <!-- CARRINHO -->
+ <div class="coluna-direita">
+
   <aside class="carrinho" id="carrinho">
     <h3>🛒 Carrinho</h3>
 
@@ -45,6 +48,14 @@
 
     <button onclick="finalizar()">Finalizar Compra</button>
   </aside>
+
+  <!-- 📦 HISTÓRICO -->
+  <section class="pedidos-box">
+    <h3>📦 Meus Pedidos</h3>
+    <div id="historicoPedidos"></div>
+  </section>
+
+</div>
 
 </main>
 
@@ -208,7 +219,20 @@ async function finalizar() {
 
  if (res.ok) {
   alert("✅ Pedido realizado com sucesso!");
-  
+
+  // 🔥 CRIA O PEDIDO (ANTES de limpar)
+  const pedido = {
+    cliente: nome,
+    itens: [...carrinho],
+    total: total
+  };
+
+  // 💾 salvar no histórico local
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+pedidos.push(pedido);
+localStorage.setItem("pedidos", JSON.stringify(pedidos));
+carregarPedidos();
+
   carrinho = [];
   atualizarCarrinho();
   atualizarContadorCarrinho();
@@ -224,6 +248,7 @@ async function finalizar() {
 
 carregarProdutos();
 atualizarContadorCarrinho();
+carregarPedidos();
 
 function atualizarContadorCarrinho() {
   const contador = document.getElementById("contadorCarrinho");
@@ -239,6 +264,100 @@ function toggleCarrinho() {
 
   carrinhoEl.classList.toggle("aberto");
   overlay.classList.toggle("ativo");
+}
+
+function gerarPDF(pedido) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+
+  doc.setFontSize(16);
+  doc.text("LOJA MANUEL PEÇAS", 10, y);
+
+  y += 10;
+
+  doc.setFontSize(12);
+  doc.text("Cliente: " + pedido.cliente, 10, y);
+
+  y += 10;
+
+  doc.text("Data: " + new Date().toLocaleString(), 10, y);
+  y += 10;
+
+  doc.text("----------------------------------------", 10, y);
+  y += 10;
+
+  pedido.itens.forEach(item => {
+    doc.text("Produto: " + item.nome, 10, y);
+    y += 6;
+
+    doc.text("Código: " + item.codigo, 10, y);
+    y += 6;
+
+    doc.text("Qtd: " + item.qtd, 10, y);
+    y += 6;
+
+    doc.text("Preço: R$ " + item.preco, 10, y);
+    y += 10;
+  });
+
+  doc.text("----------------------------------------", 10, y);
+  y += 10;
+
+  doc.setFontSize(14);
+  doc.text("TOTAL: R$ " + pedido.total.toFixed(2), 10, y);
+
+// 👇 AQUI ENTRA O CÓDIGO
+const nomeSeguro = pedido.cliente
+  .toLowerCase()
+  .replace(/\s+/g, "-")
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "");
+
+doc.save(`pedido-${nomeSeguro}.pdf`);
+}
+
+function carregarPedidos() {
+  const container = document.getElementById("historicoPedidos");
+  const pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+  container.innerHTML = "";
+
+  pedidos.forEach((pedido, index) => {
+    let itensHTML = "";
+
+    pedido.itens.forEach(item => {
+      itensHTML += `
+        <div>
+          ${item.nome} x${item.qtd} - R$ ${(item.preco * item.qtd).toFixed(2)}
+        </div>
+      `;
+    });
+
+    container.innerHTML += `
+      <div class="pedido-item">
+        <strong>👤 ${pedido.cliente}</strong><br>
+        ${itensHTML}
+        <strong>Total: R$ ${pedido.total.toFixed(2)}</strong><br><br>
+
+        <button onclick='gerarPDF(${JSON.stringify(pedido)})'>
+          📄 Gerar PDF
+        </button>
+
+        <button onclick="excluirPedido(${index})">
+          🗑️ Excluir
+        </button>
+      </div>
+    `;
+  });
+}
+
+function excluirPedido(index) {
+  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+  pedidos.splice(index, 1);
+  localStorage.setItem("pedidos", JSON.stringify(pedidos));
+  carregarPedidos();
 }
 
 </script>
