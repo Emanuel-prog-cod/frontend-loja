@@ -181,11 +181,11 @@ input:focus {
 }
 
 /* imagem */
+/* imagem */
 .produto img {
   width: 100%;
-  height: 140px;
+ 
   object-fit: contain;
-  background: #fff;
   padding: 5px;
   border-radius: 10px;
   margin-bottom: 8px;
@@ -663,4 +663,33 @@ transition: all 0.15s ease;
   right: 2px;
 
   box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+
+/* ===== IMAGEM PADRÃO PROFISSIONAL ===== */
+.img-box {
+  width: 100%;
+  height: 160px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: transparent; /* sem fundo branco */
+
+  overflow: hidden;
+}
+
+.img-box img {
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+
+  transition: transform 0.3s ease;
+}
+
+.produto:hover .img-box img {
+  transform: scale(1.08);
 }

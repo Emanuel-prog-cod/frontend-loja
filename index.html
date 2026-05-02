@@ -68,7 +68,9 @@ function renderizarProdutos(lista) {
     container.innerHTML += `
   <div class="produto">
 
-    <img src="${p.imagem || 'https://via.placeholder.com/300'}" alt="${p.nome}">
+    <div class="img-box">
+  <img src="${p.imagem || 'https://via.placeholder.com/300'}" alt="${p.nome}">
+</div>
 
     <h3>${p.nome}</h3>
     <p>💰 R$ ${p.preco}</p>
