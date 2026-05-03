@@ -594,6 +594,7 @@ transition: all 0.15s ease;
 
   /* 🔥 botão do carrinho no topo (NÃO atrapalha cards) */
   .btn-carrinho {
+    bottom: 85px; /* sobe o carrinho */
     display: flex;
     position: fixed;
     top: auto;
@@ -781,7 +782,7 @@ transform:scale(1.10);
 
 @media (max-width: 768px) {
   .whatsapp-fixo {
-    bottom: 85px; /* sobe o WhatsApp */
+     /* bottom: 85px; sobe o WhatsApp */
     right: 18px;
   }
 }
